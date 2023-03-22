@@ -1,0 +1,162 @@
+@page
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Home</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
+
+    <style>
+        canvas {
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+        }
+
+        .chart-container {
+            width: 800px;
+            margin-left: 40px;
+            margin-right: 40px;
+            margin-bottom: 40px;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+    </style>
+
+</head>
+<body>
+    <p>
+        <button id="collect-btn" type="button">SimulateStarvationWithTasks</button>
+        <button id="collect-btn2" type="button">SimulateStarvationWithThreadPool</button>
+        <button id="collect-btn3" type="button">SimulateNonBlockingWithThreadPool</button>
+        <button id="collect-btn4" type="button">SimulateNonBlockingWithTasks</button>
+    </p>
+
+    <div class="container">
+        <div class="chart-container">
+            <canvas id="threadpool-canvas"></canvas>
+        </div>
+    </div>
+
+<script>
+        Chart.defaults.global.defaultFontFamily = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+        var threadpoolContext = document.getElementById("threadpool-canvas").getContext('2d');
+        var threadPoolChart = new Chart(threadpoolContext, {
+            type: 'line',
+            data: {
+                datasets: [
+                    {
+                        label: 'Worker threads',
+                        data: [],
+                        yAxisID: 'y-axis-threads',
+                        borderColor: 'red',
+                        backgroundColor: 'red',
+                        pointRadius: 0,
+                        fill: false
+                    },
+                    {
+                        label: 'Completion port threads',
+                        data: [],
+                        yAxisID: 'y-axis-threads',
+                        borderColor: 'blue',
+                        backgroundColor: 'blue',
+                        pointRadius: 0,
+                        fill: false
+                    },
+                    {
+                        label: 'Pending work items',
+                        data: [],
+                        yAxisID: 'y-axis-threads',
+                        borderColor: 'green',
+                        backgroundColor: 'green',
+                        pointRadius: 0,
+                        fill: false
+                    },
+                    {
+                         label: 'Min workers',
+                         data: []                 
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    xAxes: [{
+                        type: 'time',
+                        distribution: 'linear',
+                        time: {
+                            unit: 'second',
+                            displayFormats: {
+                                second: 'mm:ss'
+                            }
+                        },
+                        bounds: 'ticks',
+                        ticks: {
+                            callback: function (value, index, values) {
+                                return value;
+                            }
+                        }
+                    }],
+                    yAxes: [{
+                        id: 'y-axis-threads',
+                        ticks: {
+                            beginAtZero: true,
+                            bounds: 'data',
+                            position: 'left'
+                        }
+                    }]
+                },
+                tooltips: {
+                    enabled: false
+                }
+            }
+        });
+
+        const diagnosticsUrl = "/api/threadpool";
+        // Uncomment this and comment the above when queuing tasks directly to thread pool to see the difference
+        //const diagnosticsUrl = "http://localhost:5005";
+
+        const maxEntries = 50;
+        const interval = 300;
+        var workerThreads = threadPoolChart.data.datasets[0].data;
+        var completionPortThreads = threadPoolChart.data.datasets[1].data;
+        var pendingWorkItems = threadPoolChart.data.datasets[2].data;
+
+        setInterval(function () {
+            fetch(diagnosticsUrl)
+                .then(response => {
+                    return response.json();
+                })
+                .then(threadpool => {
+                    console.log(threadpool);
+                    const now = new Date();
+                    workerThreads.push({ x: now, y: threadpool.userWorkerThreads });
+                    completionPortThreads.push({ x: now, y: threadpool.usedCompletionPortThreads });
+                    pendingWorkItems.push({ x: now, y: threadpool.pendingWorkItemCount });
+                    threadPoolChart.data.datasets[3].label = `Min Workers Count: ${threadpool.minWorkerThreadCount}`;
+                    
+                    threadPoolChart.update();
+                });
+        }, interval);
+
+        document.getElementById("collect-btn").addEventListener("click", function () { fetch('/api/simulateStarvationTasks'); });
+        document.getElementById("collect-btn2").addEventListener("click", function () { fetch('/api/simulateStarvationThreadPool'); });
+        document.getElementById("collect-btn3").addEventListener("click", function () { fetch('/api/simulateNonBlockingWithThreadPool'); });
+        document.getElementById("collect-btn4").addEventListener("click", function () { fetch('/api/simulateNonBlockingWithTasks'); });
+
+
+    </script>
+</body>
+
+</html>
