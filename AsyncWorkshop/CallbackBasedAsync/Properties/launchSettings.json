@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "CallbackBasedAsync": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}
