@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsyncWorkshopThreadPool", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CallbackBasedAsync", "CallbackBasedAsync\CallbackBasedAsync.csproj", "{7D86DBBA-2BDA-4C79-BF9E-C73C3BC85565}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AsyncAwaitUnderTheHood", "AsyncAwaitUnderTheHood\AsyncAwaitUnderTheHood.csproj", "{8BDB3FB5-7930-41A9-9305-394B1101E505}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{7D86DBBA-2BDA-4C79-BF9E-C73C3BC85565}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D86DBBA-2BDA-4C79-BF9E-C73C3BC85565}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7D86DBBA-2BDA-4C79-BF9E-C73C3BC85565}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BDB3FB5-7930-41A9-9305-394B1101E505}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BDB3FB5-7930-41A9-9305-394B1101E505}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BDB3FB5-7930-41A9-9305-394B1101E505}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BDB3FB5-7930-41A9-9305-394B1101E505}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
